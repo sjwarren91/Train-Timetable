@@ -1,0 +1,20 @@
+.card {
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.1)
+}
+
+.card-title {
+    padding: 10px;
+    background-color: #EA7E73;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: #fff;
+}
+​
+h5 {
+    background: #61b1a7;
+    border-radius: 5px;
+    padding: 10px;
+    color: #fff;
+}
