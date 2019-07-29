@@ -19,7 +19,6 @@ $("#submit").on("click", function(e){
     var name = $("#trainName").val().trim();
     var destination = $("#destination").val().trim();
     var firstTrain = $("#firstTrain").val().trim();
-    console.log(firstTrain-1);
     var freq = $("#trainFreq").val().trim();
 
     var train = {
@@ -38,15 +37,31 @@ $("#submit").on("click", function(e){
 
 });
 
-database.ref("./trains").on("child_added", function(snap){
+database.ref("/trains").on("child_added", function(snap){
     var sv = snap.val();
     //first train converted time
-    var first = moment(sv.firstTrain).subtract(1, "years");
-    var diff = moment().diff(moment(first), "minutes");
+    var first = moment(sv.firstTrain, "HH:mm").subtract(1, "years");
+    console.log(first);
+    var diff = moment().diff(moment(first), "m");
+    console.log(diff);
     var deltaT = diff % sv.freq;
+    console.log(deltaT);
     var arrive = sv.freq - deltaT;
-    var next = moment().add(arrive, "minutes");
+    console.log(arrive);
+    var next = moment().add(arrive, "m");
+    next = moment(next).format("HH:mm a")
+    console.log(next);
 
+    var newRow = $("<tr>").append(
+        $("<td>").text(sv.name),
+        $("<td>").text(sv.destination),
+        $("<td>").text(sv.freq),
+        $("<td>").text(next),
+        $("<td>").text(arrive),
+    );
 
+    $("tbody").append(newRow);
 
-})
+}, function(errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+  });
