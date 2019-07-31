@@ -37,31 +37,45 @@ $("#submit").on("click", function(e){
 
 });
 
+$(document).on("click", ".rmv-button", function(){
+    console.log($(this).attr("data"));
+    database.ref("/trains").child($(this).attr("data")).remove();
+});
+
 database.ref("/trains").on("child_added", function(snap){
     var sv = snap.val();
+    
+    var key = snap.ref.key;
     //first train converted time
     var first = moment(sv.firstTrain, "HH:mm").subtract(1, "years");
-    console.log(first);
+    
     var diff = moment().diff(moment(first), "m");
-    console.log(diff);
+    
     var deltaT = diff % sv.freq;
-    console.log(deltaT);
+    
     var arrive = sv.freq - deltaT;
-    console.log(arrive);
+    
     var next = moment().add(arrive, "m");
     next = moment(next).format("HH:mm a")
-    console.log(next);
+    
 
-    var newRow = $("<tr>").append(
+    var newRow = $("<tr id='" + key +"'>").append(
         $("<td>").text(sv.name),
         $("<td>").text(sv.destination),
         $("<td>").text(sv.freq),
         $("<td>").text(next),
         $("<td>").text(arrive),
+        $("<td><button class='rmv-button' data='" + key + "'>Remove</button></td>")
     );
 
     $("tbody").append(newRow);
 
 }, function(errorObject) {
     console.log("Errors handled: " + errorObject.code);
-  });
+});
+
+database.ref("/trains").on("child_removed", function(snap){
+    $("#" + snap.ref.key).empty();
+    console.log("#" + snap.ref.key);
+    console.log(snap.ref.key);
+})
